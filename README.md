@@ -47,7 +47,7 @@ See the [accompanying blog post on the AWS Serverless Blog](https://aws.amazon.c
 Clone this repository:
 
 ```bash
-git clone https://github.com/aws-samples/serverless-pdf-chat.git
+git clone https://github.com/OskiePixel/FinAlzers.git
 ```
 
 ### Amazon Bedrock setup

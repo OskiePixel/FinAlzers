@@ -6,6 +6,8 @@ import "./index.css";
 import Layout from "./routes/layout";
 import Documents from "./routes/documents";
 import Chat from "./routes/chat";
+import KnowledgeBase from "./routes/knowledgebase";
+import Review from "./routes/review";
 
 Amplify.configure({
   Auth: {
@@ -47,6 +49,13 @@ const router = createBrowserRouter([
       {
         path: "/doc/:documentid/:conversationid",
         Component: Chat,
+      },
+      {
+        path: "/knowledgebase",
+        Component: KnowledgeBase,
+      },{
+        path: "/review",
+        Component: Review,
       },
     ],
   },

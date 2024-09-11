@@ -5,8 +5,12 @@ import { Conversation } from "../common/types";
 import ChatSidebar from "../components/ChatSidebar";
 import ChatMessages from "../components/ChatMessages";
 import LoadingGrid from "../../public/loading-grid.svg";
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+import Bot from "../../public/bot.png";
 
-const Document: React.FC = () => {
+const Review: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
 
@@ -17,17 +21,35 @@ const Document: React.FC = () => {
     "idle" | "loading"
   >("idle");
   const [prompt, setPrompt] = useState("");
+  interface User {
+    project: string;
+    workdocs: string;
+    region: any;
+    status: string;
+    talk?: string;
+  }
+  const [rowData, setRowData] = useState<User[]>([
+    { project: "FBI project 1", workdocs: 'Content', region: [], status: 'In progress' },
+    { project: "FBI project 2", workdocs: 'Content', region: [], status: 'Completed' },
+    { project: "FBI project 3", workdocs: 'Content', region: ["NA","EMEA"], status: '' },
+    { project: "FBI project 4", workdocs: 'Content', region: ["Global"], status: '' },
+  ]);
+
+  const columnDefs = [
+    { field: 'project', headerName: 'Project name' },
+    { field: 'workdocs', headerName: 'workdocs url' },
+    { field: 'region', headerName: 'Region(s)' },
+    { field: 'status', headerName: 'status' },
+    { field: 'talk', headerName: 'talk' },
+  ];
 
   const fetchData = async (conversationid = params.conversationid) => {
-    setLoading("loading");
     const response = await get({
       apiName: "serverless-pdf-chat",
       path: `doc/${params.documentid}/${conversationid}`
     }).response
     const conversation = await response.body.json() as unknown as Conversation
-    console.log(conversation)
     setConversation(conversation);
-    setLoading("idle");
     console.log("Foo")
   };
 
@@ -101,33 +123,25 @@ const Document: React.FC = () => {
   };
 
   return (
-    <div className="">
-      {loading === "loading" && !conversation && (
-        <div className="flex flex-col items-center mt-6">
-          <img src={LoadingGrid} width={40} />
-        </div>
-      )}
-      {conversation && (
-        <div className="grid grid-cols-12 border border-gray-200 rounded-lg">
-          <ChatSidebar
-            conversation={conversation}
-            params={params}
-            addConversation={addConversation}
-            switchConversation={switchConversation}
-            conversationListStatus={conversationListStatus}
-          />
-          <ChatMessages
-            prompt={prompt}
-            conversation={conversation}
-            messageStatus={messageStatus}
-            submitMessage={submitMessage}
-            handleKeyPress={handleKeyPress}
-            handlePromptChange={handlePromptChange}
-          />
-        </div>
-      )}
+<div className="">
+    <div className="center bot">
+      <img src={Bot} />
+      </div>
+      <div className="center bold">
+      <label>
+      FinDoc Document store
+      </label>
+      </div>
+    <div className="ag-theme-alpine" style={{ height: 400, width: 1000 }}>
+      <AgGridReact
+        rowData={rowData}
+        columnDefs={columnDefs}
+        pagination={true}
+        paginationPageSize={10}
+      />
+    </div>
     </div>
   );
 };
 
-export default Document;
+export default Review;

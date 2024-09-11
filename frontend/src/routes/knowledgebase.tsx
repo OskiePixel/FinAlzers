@@ -5,8 +5,13 @@ import { Conversation } from "../common/types";
 import ChatSidebar from "../components/ChatSidebar";
 import ChatMessages from "../components/ChatMessages";
 import LoadingGrid from "../../public/loading-grid.svg";
+import Bot from "../../public/bot.png";
 
-const Document: React.FC = () => {
+import ChatMessagesText from "../components/ChatMessagesText";
+import "./styles.css"
+import GridContainer from "../components/GridContainer";
+import GridContainerHorizontal from "../components/GridContainerHorizontal";
+const Knowledgebase: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
 
@@ -19,15 +24,13 @@ const Document: React.FC = () => {
   const [prompt, setPrompt] = useState("");
 
   const fetchData = async (conversationid = params.conversationid) => {
-    setLoading("loading");
-    const response = await get({
-      apiName: "serverless-pdf-chat",
-      path: `doc/${params.documentid}/${conversationid}`
-    }).response
-    const conversation = await response.body.json() as unknown as Conversation
+    // const response = await get({
+    //   apiName: "serverless-pdf-chat",
+    //   path: `doc/${params.documentid}/${conversationid}`
+    // }).response
+    const conversation = {"messages":[]} as unknown as Conversation
     console.log(conversation)
     setConversation(conversation);
-    setLoading("idle");
     console.log("Foo")
   };
 
@@ -64,8 +67,6 @@ const Document: React.FC = () => {
   };
 
   const submitMessage = async () => {
-    setMessageStatus("loading");
-
     if (conversation !== null) {
       const previewMessage = {
         type: "text",
@@ -83,51 +84,58 @@ const Document: React.FC = () => {
 
       setConversation(updatedConversation);
 
-
-      await post({
-        apiName: "serverless-pdf-chat",
-        path: `${conversation?.document.documentid}/${conversation?.conversationid}`,
-        options: {
-          body: {
-            fileName: conversation?.document.filename,
-            prompt: prompt,
-          }
-        }
-      }).response;
       setPrompt("");
-      fetchData(conversation?.conversationid);
+      // fetchData(conversation?.conversationid);
       setMessageStatus("idle");
     }
   };
 
   return (
     <div className="">
-      {loading === "loading" && !conversation && (
-        <div className="flex flex-col items-center mt-6">
-          <img src={LoadingGrid} width={40} />
-        </div>
-      )}
-      {conversation && (
-        <div className="grid grid-cols-12 border border-gray-200 rounded-lg">
-          <ChatSidebar
-            conversation={conversation}
-            params={params}
-            addConversation={addConversation}
-            switchConversation={switchConversation}
-            conversationListStatus={conversationListStatus}
-          />
-          <ChatMessages
-            prompt={prompt}
-            conversation={conversation}
-            messageStatus={messageStatus}
-            submitMessage={submitMessage}
-            handleKeyPress={handleKeyPress}
-            handlePromptChange={handlePromptChange}
-          />
-        </div>
+      <div className="center bot">
+      <img src={Bot} />
+      </div>
+      <div className="center bold">
+      <label>
+      FinDoc
+      </label>
+      </div>
+      <div className="center">
+      <label>
+      FBI project name
+      </label>
+      </div>
+      <div>
+        <GridContainerHorizontal></GridContainerHorizontal>
+      </div>
+      <div className="scorecard" >
+      <label>
+        <div className="bold">Score card</div>
+      
+      </label>
+        <GridContainer></GridContainer>
+      </div>
+      <div>
+      <label>
+      <div className="bold">Review</div>
+
+      
+      </label>
+
+      <textarea name="postContent" rows={4} cols={50} onChange={(event) => console.log(event.target.value)}/>
+
+      </div>
+      {conversation && (<ChatMessagesText
+                  prompt={prompt}
+                  conversation={conversation}
+                  messageStatus={messageStatus}
+                  submitMessage={submitMessage}
+                  handleKeyPress={handleKeyPress}
+                  handlePromptChange={handlePromptChange}
+                />
       )}
     </div>
   );
 };
 
-export default Document;
+export default Knowledgebase;

@@ -1,0 +1,14 @@
+boto3
+botocore
+langchain==0.2.12
+urllib3
+opensearch-py==2.3.1
+apache-beam
+datasets
+pypdf>=4.1.0
+langchain-community
+faiss-cpu==1.8.0
+tiktoken==0.6.0
+sqlalchemy==2.0.28
+langchain-aws
+docx2txt

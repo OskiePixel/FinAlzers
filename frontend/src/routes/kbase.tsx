@@ -25,7 +25,6 @@ const Document: React.FC = () => {
       path: `doc/${params.documentid}/${conversationid}`
     }).response
     const conversation = await response.body.json() as unknown as Conversation
-    console.log(conversation)
     setConversation(conversation);
     setLoading("idle");
     console.log("Foo")
@@ -102,11 +101,11 @@ const Document: React.FC = () => {
 
   return (
     <div className="">
-      {loading === "loading" && !conversation && (
+      {/* {loading === "loading" && !conversation && (
         <div className="flex flex-col items-center mt-6">
           <img src={LoadingGrid} width={40} />
         </div>
-      )}
+      )} */}
       {conversation && (
         <div className="grid grid-cols-12 border border-gray-200 rounded-lg">
           <ChatSidebar

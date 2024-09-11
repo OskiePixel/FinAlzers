@@ -318,11 +318,60 @@ Resources:
           Properties:
             Queue: !GetAtt EmbeddingQueue.Arn
             BatchSize: 1
+  
+  GenerateKnowledgeBaseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/generate_kbase/
+      Timeout: 180
+      MemorySize: 2048
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref DocumentBucket
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DocumentTable
+        - Statement:
+            - Sid: "BedrockScopedAccess"
+              Effect: "Allow"
+              Action: "bedrock:InvokeModel"
+              Resource: !Sub "arn:aws:bedrock:*::foundation-model/${EmbeddingModelId}"
 
   GenerateResponseFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/generate_response/
+      Timeout: 30
+      MemorySize: 2048
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MemoryTable
+        - S3CrudPolicy:
+            BucketName: !Ref DocumentBucket
+        - Statement:
+            - Sid: "BedrockScopedAccess"
+              Effect: "Allow"
+              Action: "bedrock:InvokeModel"
+              Resource:
+                - !Sub "arn:aws:bedrock:*::foundation-model/${ModelId}"
+                - !Sub "arn:aws:bedrock:*::foundation-model/${EmbeddingModelId}"
+      Environment:
+        Variables:
+          MEMORY_TABLE: !Ref MemoryTable
+          BUCKET: !Ref DocumentBucket
+          MODEL_ID: !Ref ModelId
+          EMBEDDING_MODEL_ID: !Ref EmbeddingModelId
+      Events:
+        Root:
+          Type: Api
+          Properties:
+            RestApiId: !Ref Api
+            Path: /{documentid}/{conversationid}
+            Method: POST
+
+  GenerateFinDocResponseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/generate_findoc_response/
       Timeout: 30
       MemorySize: 2048
       Policies:
