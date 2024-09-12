@@ -28,6 +28,8 @@ const Knowledgebase: React.FC = () => {
     //   apiName: "serverless-pdf-chat",
     //   path: `doc/${params.documentid}/${conversationid}`
     // }).response
+    // print conversationid
+    console.log(conversationid)
     const conversation = {"messages":[]} as unknown as Conversation
     console.log(conversation)
     setConversation(conversation);
