@@ -1,9 +1,10 @@
 boto3
 botocore
 langchain==0.2.12
+langchain-community==0.2.10
+langchain-aws==0.1.13
 urllib3
 opensearch-py==2.3.1
-apache-beam
 datasets
 pypdf>=4.1.0
 langchain-community
